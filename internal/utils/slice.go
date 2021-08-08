@@ -14,6 +14,25 @@ func SliceSplit(sourceSlice []string, chunkSize int) [][]string {
 	return resultChunks
 }
 
+func SliceFilter(sourceSlice []string, excludeSlice []string) []string {
+	excludeMap := convertSliceToMap(excludeSlice)
+	var resultSlice []string
+	for _, element := range sourceSlice {
+		if _, found := excludeMap[element]; !found {
+			resultSlice = append(resultSlice, element)
+		}
+	}
+	return resultSlice
+}
+
+func convertSliceToMap(sourceSlice []string) map[string]string {
+	resultMap := map[string]string{}
+	for _, element := range sourceSlice {
+		resultMap[element] = element
+	}
+	return resultMap
+}
+
 func min(x, y int) int {
 	if x < y {
 		return x
