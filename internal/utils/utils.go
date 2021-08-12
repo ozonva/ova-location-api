@@ -25,6 +25,17 @@ func SliceFilter(sourceSlice []string, excludeSlice []string) []string {
 	return resultSlice
 }
 
+func MapFlip(sourceMap map[string]string) map[string]string {
+	resultMap := make(map[string]string, len(sourceMap))
+	for key, value := range sourceMap {
+		if _, found := resultMap[value]; found {
+			continue
+		}
+		resultMap[value] = key
+	}
+	return resultMap
+}
+
 func convertSliceToMap(sourceSlice []string) map[string]string {
 	resultMap := map[string]string{}
 	for _, element := range sourceSlice {
