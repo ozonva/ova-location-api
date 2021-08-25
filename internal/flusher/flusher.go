@@ -27,7 +27,7 @@ type flusher struct {
 
 func (flusher *flusher) Flush(entities []location.Location) []location.Location {
 	chunks := utils.LocationSliceSplit(entities, flusher.chunkSize)
-	unsavedEntities := make([]location.Location, 0, len(entities))
+	var unsavedEntities []location.Location
 	for _, chunk := range chunks {
 		err := flusher.entityRepo.AddEntities(chunk)
 		if err != nil {
@@ -35,9 +35,5 @@ func (flusher *flusher) Flush(entities []location.Location) []location.Location 
 		}
 	}
 
-	if len(unsavedEntities) != 0 {
-		return unsavedEntities
-	}
-
-	return nil
+	return unsavedEntities
 }
