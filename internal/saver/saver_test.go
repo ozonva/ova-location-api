@@ -1,4 +1,4 @@
-package saver_test
+package saver
 
 import (
 	"github.com/golang/mock/gomock"
@@ -6,7 +6,6 @@ import (
 	. "github.com/onsi/gomega"
 	"github.com/ozonva/ova-location-api/internal/location"
 	"github.com/ozonva/ova-location-api/internal/mocks"
-	"github.com/ozonva/ova-location-api/internal/saver"
 	"time"
 )
 
@@ -17,7 +16,7 @@ var _ = Describe("Saver", func() {
 		locations       []location.Location
 		capacity        uint64
 		timeout         time.Duration
-		saverInstance   saver.Saver
+		saverInstance   *saver
 		flushedEntities []location.Location
 	)
 
@@ -36,7 +35,7 @@ var _ = Describe("Saver", func() {
 
 	JustBeforeEach(func() {
 		flushedEntities = make([]location.Location, 0)
-		saverInstance = saver.New(capacity, mockFlusher, timeout)
+		saverInstance = New(capacity, mockFlusher, timeout)
 		saverInstance.Init()
 	})
 
@@ -55,7 +54,7 @@ var _ = Describe("Saver", func() {
 		Context("Проверяем добавление элементов", func() {
 			It("Сразу после добавления в буфере один элемент", func() {
 				Eventually(func() []location.Location {
-					return saverInstance.GetBuffer()
+					return saverInstance.buffer
 				}, 100*time.Millisecond).Should(BeEquivalentTo([]location.Location{locations[0]}))
 				saverInstance.Close()
 			})
@@ -64,7 +63,7 @@ var _ = Describe("Saver", func() {
 		Context("Проверяем сброс элементов в хранилище", func() {
 			It("По истечении таймаута буфер пуст", func() {
 				Eventually(func() []location.Location {
-					return saverInstance.GetBuffer()
+					return saverInstance.buffer
 				}, timeout+500*time.Millisecond).Should(BeNil())
 				saverInstance.Close()
 			})
@@ -72,7 +71,7 @@ var _ = Describe("Saver", func() {
 			It("После вызова метода Close буфер пуст", func() {
 				saverInstance.Close()
 				Eventually(func() []location.Location {
-					return saverInstance.GetBuffer()
+					return saverInstance.buffer
 				}, 100*time.Millisecond).Should(BeNil())
 			})
 		})

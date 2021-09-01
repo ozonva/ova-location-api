@@ -10,14 +10,13 @@ type Saver interface {
 	Save(entity location.Location)
 	Init()
 	Close()
-	GetBuffer() []location.Location
 }
 
 func New(
 	capacity uint64,
 	flusher flusher.Flusher,
 	timeout time.Duration,
-) Saver {
+) *saver {
 	return &saver{
 		capacity: capacity,
 		flusher:  flusher,
@@ -45,10 +44,6 @@ func (s *saver) Init() {
 
 func (s *saver) Save(entity location.Location) {
 	s.write <- entity
-}
-
-func (s *saver) GetBuffer() []location.Location {
-	return s.buffer
 }
 
 func (s *saver) Close() {
