@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+import "google/api/annotations.proto";
+
+package api;
+
+option go_package = "github.com/ozonva/ova-location-api/pkg/ova-location-api;ova_location_api";
+
+service api {
+  rpc CreateLocationV1(CreateLocationV1Request) returns (LocationV1Response) {
+    option (google.api.http) = {
+      post: "/v1/locations"
+      body: "*"
+    };
+  }
+  rpc GetLocationV1(GetLocationV1Request) returns (LocationV1Response) {
+    option (google.api.http) = {
+      get: "/v1/locations/{id}"
+    };
+  }
+  rpc ListLocationsV1(ListLocationV1Request) returns (ListLocationsV1Response) {
+    option (google.api.http) = {
+      get: "/v1/locations"
+    };
+  }
+  rpc RemoveLocationV1(RemoveLocationV1Request) returns (RemoveV1Response) {
+    option (google.api.http) = {
+      delete: "/v1/locations/{id}"
+    };
+  }
+}
+
+message CreateLocationV1Request {
+  uint64 user_id = 1;
+  string address = 2;
+  double longitude = 3;
+  double latitude = 4;
+}
+
+message GetLocationV1Request {
+  uint64 id = 1;
+}
+
+message ListLocationV1Request {
+  uint64 limit = 1;
+  uint64 offset = 2;
+}
+
+message RemoveLocationV1Request {
+  uint64 id = 1;
+}
+
+message ListLocationsV1Response {
+  repeated LocationV1Response list = 1;
+}
+
+message LocationV1Response {
+  uint64 user_id = 1;
+  string address = 2;
+  double longitude = 3;
+  double latitude = 4;
+  string created_at = 5;
+}
+
+message RemoveV1Response {
+  bool status = 1;
+} 
