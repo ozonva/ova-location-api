@@ -14,6 +14,18 @@ service api {
       body: "*"
     };
   }
+  rpc MultiCreateLocationsV1(MultiCreateLocationsV1Request) returns (MultiCreateLocationsV1Response) {
+    option (google.api.http) = {
+      post: "/v1/locations/multi"
+      body: "*"
+    };
+  }
+  rpc UpdateLocationV1(UpdateLocationV1Request) returns (LocationV1Response) {
+    option (google.api.http) = {
+      put: "/v1/locations"
+      body: "*"
+    };
+  }
   rpc GetLocationV1(GetLocationV1Request) returns (LocationV1Response) {
     option (google.api.http) = {
       get: "/v1/locations/{id}"
@@ -36,6 +48,22 @@ message CreateLocationV1Request {
   string address   = 2;
   double longitude = 3;
   double latitude  = 4;
+}
+
+message MultiCreateLocationsV1Request {
+  repeated CreateLocationV1Request locations = 1;
+}
+
+message MultiCreateLocationsV1Response {
+  repeated LocationV1Response list = 1;
+}
+
+message UpdateLocationV1Request {
+  uint64 id        = 1;
+  uint64 user_id   = 2;
+  string address   = 3;
+  double longitude = 4;
+  double latitude  = 5;
 }
 
 message GetLocationV1Request {

@@ -14,8 +14,9 @@ import (
 const table = "location"
 
 type Repo interface {
-	AddEntities(entities []location.Location) error
+	AddEntities(ctx context.Context, entities []location.Location) ([]uint64, error)
 	CreateEntity(ctx context.Context, entity *location.Location) error
+	UpdateEntity(ctx context.Context, entity *location.Location) error
 	ListEntities(ctx context.Context, limit, offset uint64) ([]location.Location, error)
 	GetEntity(ctx context.Context, id uint64) (*location.Location, error)
 	RemoveEntity(ctx context.Context, id uint64) (bool, error)
@@ -49,7 +50,64 @@ func (r *repo) CreateEntity(ctx context.Context, entity *location.Location) erro
 	return nil
 }
 
-func (r *repo) AddEntities(entities []location.Location) error {
+func (r *repo) AddEntities(ctx context.Context, entities []location.Location) ([]uint64, error) {
+	query := squirrel.
+		Insert(table).
+		Columns("user_id", "address", "longitude", "latitude").
+		Suffix("RETURNING \"id\"").
+		PlaceholderFormat(squirrel.Dollar)
+
+	for _, entity := range entities {
+		query = query.Values(entity.UserId, entity.Address, entity.Longitude, entity.Latitude)
+	}
+
+	qsql, args, err := query.ToSql()
+
+	if err != nil {
+		log.Error().Err(err).Msg("Не удалось сгенерировать запрос на сохранение списка локаций")
+		return nil, err
+	}
+
+	ids := make([]uint64, 0)
+	err = r.db.SelectContext(ctx, &entities, qsql, args...)
+	if err != nil {
+		log.Error().Err(err).Msg("Не удалось выполнить запрос на сохранение списка локаций")
+	}
+
+	return ids, nil
+}
+
+func (r *repo) UpdateEntity(ctx context.Context, entity *location.Location) error {
+	query := squirrel.Update(table).
+		SetMap(map[string]interface{}{
+			"user_id":    entity.UserId,
+			"address":    entity.Address,
+			"longitude":  entity.Longitude,
+			"latitude":   entity.Latitude,
+			"created_at": entity.CreatedAt,
+		}).
+		Where(squirrel.Eq{"id": entity.Id}).
+		RunWith(r.db).
+		PlaceholderFormat(squirrel.Dollar)
+
+	result, err := query.ExecContext(ctx)
+
+	if err != nil {
+		log.Error().Err(err).Msg("Не удалось сохранить локацию")
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected <= 0 {
+		log.Error().Err(err).Msg("Локации не существовало")
+		return errors.New("локации не существовало")
+	}
+
 	return nil
 }
 
