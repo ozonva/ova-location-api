@@ -6,12 +6,12 @@ import (
 )
 
 type Location struct {
-	Id        uint64
-	UserId    uint64
-	Address   string
-	Longitude float64
-	Latitude  float64
-	CreatedAt time.Time
+	Id        uint64    `db:"id"`
+	UserId    uint64    `db:"user_id"`
+	Address   string    `db:"address"`
+	Longitude float64   `db:"longitude"`
+	Latitude  float64   `db:"latitude"`
+	CreatedAt time.Time `db:"created_at"`
 }
 
 func (location Location) String() string {

@@ -5,6 +5,7 @@
 package mocks
 
 import (
+	context "context"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
@@ -48,32 +49,61 @@ func (mr *MockRepoMockRecorder) AddEntities(arg0 interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddEntities", reflect.TypeOf((*MockRepo)(nil).AddEntities), arg0)
 }
 
-// GetEntity mocks base method.
-func (m *MockRepo) GetEntity(arg0 uint64) (*location.Location, error) {
+// CreateEntity mocks base method.
+func (m *MockRepo) CreateEntity(arg0 context.Context, arg1 *location.Location) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetEntity", arg0)
+	ret := m.ctrl.Call(m, "CreateEntity", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreateEntity indicates an expected call of CreateEntity.
+func (mr *MockRepoMockRecorder) CreateEntity(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateEntity", reflect.TypeOf((*MockRepo)(nil).CreateEntity), arg0, arg1)
+}
+
+// GetEntity mocks base method.
+func (m *MockRepo) GetEntity(arg0 context.Context, arg1 uint64) (*location.Location, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetEntity", arg0, arg1)
 	ret0, _ := ret[0].(*location.Location)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetEntity indicates an expected call of GetEntity.
-func (mr *MockRepoMockRecorder) GetEntity(arg0 interface{}) *gomock.Call {
+func (mr *MockRepoMockRecorder) GetEntity(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEntity", reflect.TypeOf((*MockRepo)(nil).GetEntity), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEntity", reflect.TypeOf((*MockRepo)(nil).GetEntity), arg0, arg1)
 }
 
 // ListEntities mocks base method.
-func (m *MockRepo) ListEntities(arg0, arg1 uint64) ([]location.Location, error) {
+func (m *MockRepo) ListEntities(arg0 context.Context, arg1, arg2 uint64) ([]location.Location, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ListEntities", arg0, arg1)
+	ret := m.ctrl.Call(m, "ListEntities", arg0, arg1, arg2)
 	ret0, _ := ret[0].([]location.Location)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ListEntities indicates an expected call of ListEntities.
-func (mr *MockRepoMockRecorder) ListEntities(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockRepoMockRecorder) ListEntities(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListEntities", reflect.TypeOf((*MockRepo)(nil).ListEntities), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListEntities", reflect.TypeOf((*MockRepo)(nil).ListEntities), arg0, arg1, arg2)
+}
+
+// RemoveEntity mocks base method.
+func (m *MockRepo) RemoveEntity(arg0 context.Context, arg1 uint64) (bool, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "RemoveEntity", arg0, arg1)
+	ret0, _ := ret[0].(bool)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// RemoveEntity indicates an expected call of RemoveEntity.
+func (mr *MockRepoMockRecorder) RemoveEntity(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RemoveEntity", reflect.TypeOf((*MockRepo)(nil).RemoveEntity), arg0, arg1)
 }
