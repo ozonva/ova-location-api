@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
 
 package api;
 
@@ -31,10 +32,10 @@ service api {
 }
 
 message CreateLocationV1Request {
-  uint64 user_id = 1;
-  string address = 2;
+  uint64 user_id   = 1;
+  string address   = 2;
   double longitude = 3;
-  double latitude = 4;
+  double latitude  = 4;
 }
 
 message GetLocationV1Request {
@@ -42,7 +43,7 @@ message GetLocationV1Request {
 }
 
 message ListLocationV1Request {
-  uint64 limit = 1;
+  uint64 limit  = 1;
   uint64 offset = 2;
 }
 
@@ -55,11 +56,12 @@ message ListLocationsV1Response {
 }
 
 message LocationV1Response {
-  uint64 user_id = 1;
-  string address = 2;
-  double longitude = 3;
-  double latitude = 4;
-  string created_at = 5;
+  uint64 id        = 1;
+  uint64 user_id   = 2;
+  string address   = 3;
+  double longitude = 4;
+  double latitude  = 5;
+  google.protobuf.Timestamp created_at = 6;
 }
 
 message RemoveV1Response {
