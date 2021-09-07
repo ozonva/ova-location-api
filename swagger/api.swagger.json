@@ -82,6 +82,68 @@
         "tags": [
           "api"
         ]
+      },
+      "put": {
+        "operationId": "api_UpdateLocationV1",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/apiLocationV1Response"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/apiUpdateLocationV1Request"
+            }
+          }
+        ],
+        "tags": [
+          "api"
+        ]
+      }
+    },
+    "/v1/locations/multi": {
+      "post": {
+        "operationId": "api_MultiCreateLocationsV1",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/apiMultiCreateLocationsV1Response"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/apiMultiCreateLocationsV1Request"
+            }
+          }
+        ],
+        "tags": [
+          "api"
+        ]
       }
     },
     "/v1/locations/{id}": {
@@ -205,11 +267,57 @@
         }
       }
     },
+    "apiMultiCreateLocationsV1Request": {
+      "type": "object",
+      "properties": {
+        "locations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/apiCreateLocationV1Request"
+          }
+        }
+      }
+    },
+    "apiMultiCreateLocationsV1Response": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/apiLocationV1Response"
+          }
+        }
+      }
+    },
     "apiRemoveV1Response": {
       "type": "object",
       "properties": {
         "status": {
           "type": "boolean"
+        }
+      }
+    },
+    "apiUpdateLocationV1Request": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "userId": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "address": {
+          "type": "string"
+        },
+        "longitude": {
+          "type": "number",
+          "format": "double"
+        },
+        "latitude": {
+          "type": "number",
+          "format": "double"
         }
       }
     },

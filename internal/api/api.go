@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"github.com/ozonva/ova-location-api/internal/flusher"
 
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc/codes"
@@ -24,6 +25,24 @@ func New(repo repo.Repo) api.ApiServer {
 	}
 }
 
+func (a *OvaLocationApi) MultiCreateLocationsV1(ctx context.Context, req *api.MultiCreateLocationsV1Request) (*api.MultiCreateLocationsV1Response, error) {
+	var entities []location.Location
+	for _, row := range req.Locations {
+		entities = append(entities, location.Location{
+			UserId:    row.UserId,
+			Address:   row.Address,
+			Longitude: row.Longitude,
+			Latitude:  row.Latitude,
+		})
+	}
+
+	flusherInstance := flusher.NewFlusher(50, a.repo)
+
+	return &api.MultiCreateLocationsV1Response{
+		List: flusherInstance.Flush(entities),
+	}, nil
+}
+
 func (a *OvaLocationApi) CreateLocationV1(ctx context.Context, req *api.CreateLocationV1Request) (*api.LocationV1Response, error) {
 	entity := &location.Location{
 		UserId:    req.UserId,
@@ -33,6 +52,32 @@ func (a *OvaLocationApi) CreateLocationV1(ctx context.Context, req *api.CreateLo
 	}
 
 	err := a.repo.CreateEntity(ctx, entity)
+
+	if err != nil {
+		log.Error().Err(err).Msg("Не удалось сохранить локацию")
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &api.LocationV1Response{
+		Id:        entity.Id,
+		UserId:    entity.UserId,
+		Address:   entity.Address,
+		Longitude: entity.Longitude,
+		Latitude:  entity.Latitude,
+		CreatedAt: timestamppb.New(entity.CreatedAt),
+	}, nil
+}
+
+func (a *OvaLocationApi) UpdateLocationV1(ctx context.Context, req *api.UpdateLocationV1Request) (*api.LocationV1Response, error) {
+	entity := &location.Location{
+		Id:        req.Id,
+		UserId:    req.UserId,
+		Address:   req.Address,
+		Longitude: req.Longitude,
+		Latitude:  req.Latitude,
+	}
+
+	err := a.repo.UpdateEntity(ctx, entity)
 
 	if err != nil {
 		log.Error().Err(err).Msg("Не удалось сохранить локацию")

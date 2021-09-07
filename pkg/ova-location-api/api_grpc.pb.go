@@ -19,6 +19,8 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ApiClient interface {
 	CreateLocationV1(ctx context.Context, in *CreateLocationV1Request, opts ...grpc.CallOption) (*LocationV1Response, error)
+	MultiCreateLocationsV1(ctx context.Context, in *MultiCreateLocationsV1Request, opts ...grpc.CallOption) (*MultiCreateLocationsV1Response, error)
+	UpdateLocationV1(ctx context.Context, in *UpdateLocationV1Request, opts ...grpc.CallOption) (*LocationV1Response, error)
 	GetLocationV1(ctx context.Context, in *GetLocationV1Request, opts ...grpc.CallOption) (*LocationV1Response, error)
 	ListLocationsV1(ctx context.Context, in *ListLocationV1Request, opts ...grpc.CallOption) (*ListLocationsV1Response, error)
 	RemoveLocationV1(ctx context.Context, in *RemoveLocationV1Request, opts ...grpc.CallOption) (*RemoveV1Response, error)
@@ -35,6 +37,24 @@ func NewApiClient(cc grpc.ClientConnInterface) ApiClient {
 func (c *apiClient) CreateLocationV1(ctx context.Context, in *CreateLocationV1Request, opts ...grpc.CallOption) (*LocationV1Response, error) {
 	out := new(LocationV1Response)
 	err := c.cc.Invoke(ctx, "/api.api/CreateLocationV1", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *apiClient) MultiCreateLocationsV1(ctx context.Context, in *MultiCreateLocationsV1Request, opts ...grpc.CallOption) (*MultiCreateLocationsV1Response, error) {
+	out := new(MultiCreateLocationsV1Response)
+	err := c.cc.Invoke(ctx, "/api.api/MultiCreateLocationsV1", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *apiClient) UpdateLocationV1(ctx context.Context, in *UpdateLocationV1Request, opts ...grpc.CallOption) (*LocationV1Response, error) {
+	out := new(LocationV1Response)
+	err := c.cc.Invoke(ctx, "/api.api/UpdateLocationV1", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -73,6 +93,8 @@ func (c *apiClient) RemoveLocationV1(ctx context.Context, in *RemoveLocationV1Re
 // for forward compatibility
 type ApiServer interface {
 	CreateLocationV1(context.Context, *CreateLocationV1Request) (*LocationV1Response, error)
+	MultiCreateLocationsV1(context.Context, *MultiCreateLocationsV1Request) (*MultiCreateLocationsV1Response, error)
+	UpdateLocationV1(context.Context, *UpdateLocationV1Request) (*LocationV1Response, error)
 	GetLocationV1(context.Context, *GetLocationV1Request) (*LocationV1Response, error)
 	ListLocationsV1(context.Context, *ListLocationV1Request) (*ListLocationsV1Response, error)
 	RemoveLocationV1(context.Context, *RemoveLocationV1Request) (*RemoveV1Response, error)
@@ -85,6 +107,12 @@ type UnimplementedApiServer struct {
 
 func (UnimplementedApiServer) CreateLocationV1(context.Context, *CreateLocationV1Request) (*LocationV1Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateLocationV1 not implemented")
+}
+func (UnimplementedApiServer) MultiCreateLocationsV1(context.Context, *MultiCreateLocationsV1Request) (*MultiCreateLocationsV1Response, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MultiCreateLocationsV1 not implemented")
+}
+func (UnimplementedApiServer) UpdateLocationV1(context.Context, *UpdateLocationV1Request) (*LocationV1Response, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateLocationV1 not implemented")
 }
 func (UnimplementedApiServer) GetLocationV1(context.Context, *GetLocationV1Request) (*LocationV1Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetLocationV1 not implemented")
@@ -122,6 +150,42 @@ func _Api_CreateLocationV1_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ApiServer).CreateLocationV1(ctx, req.(*CreateLocationV1Request))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Api_MultiCreateLocationsV1_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MultiCreateLocationsV1Request)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ApiServer).MultiCreateLocationsV1(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.api/MultiCreateLocationsV1",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ApiServer).MultiCreateLocationsV1(ctx, req.(*MultiCreateLocationsV1Request))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Api_UpdateLocationV1_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateLocationV1Request)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ApiServer).UpdateLocationV1(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.api/UpdateLocationV1",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ApiServer).UpdateLocationV1(ctx, req.(*UpdateLocationV1Request))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -190,6 +254,14 @@ var Api_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateLocationV1",
 			Handler:    _Api_CreateLocationV1_Handler,
+		},
+		{
+			MethodName: "MultiCreateLocationsV1",
+			Handler:    _Api_MultiCreateLocationsV1_Handler,
+		},
+		{
+			MethodName: "UpdateLocationV1",
+			Handler:    _Api_UpdateLocationV1_Handler,
 		},
 		{
 			MethodName: "GetLocationV1",
